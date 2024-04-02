@@ -1,5 +1,20 @@
+const User = require('../models/User');
+const { StatusCodes } = require('http-status-codes');
+const CustomError = require('../errors');
+
 const register = async (req, res) => {
-	res.send('register user');
+	const { email, name, password } = req.body;
+
+	const emailAlreadyExists = await User.findOne({ email });
+	if (emailAlreadyExists) {
+		throw new CustomError.BadRequestError('Email already exists');
+	}
+
+	// Register first user as admin
+	const isFirstAccount = (await User.countDocuments({})) === 0;
+	const role = isFirstAccount ? 'admin' : 'user';
+	const user = await User.create({ name, email, password, role });
+	res.status(StatusCodes.CREATED).json({ user });
 };
 
 const login = async (req, res) => {
@@ -7,7 +22,7 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-	res.send('logout user');
+	res.send('logout user test');
 };
 
 module.exports = {
