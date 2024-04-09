@@ -38,7 +38,9 @@ const login = async (req, res) => {
 	const isPasswordCorrect = await user.comparePassword(password);
 	// Check if password is incorrect
 	if (!isPasswordCorrect) {
-		throw new CustomError.UnauthenticatedError('Invalid Credentials');
+		throw new CustomError.UnauthenticatedError(
+			'Invalid Credentials: password'
+		);
 	}
 	// Now, user exist and password is correct, we create the token user and attach the cookie to the response and send the same response in the register function
 	const tokenUser = createTokenUser(user);
