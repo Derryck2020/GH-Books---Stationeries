@@ -49,31 +49,18 @@ const deleteProduct = async (req, res) => {
 	res.status(StatusCodes.OK).json({ msg: 'Success! Product Removed' });
 };
 
-const uploadProductImage = async (req, res) => {
-	console.log(req.files);
-	if (!req.files) {
-		throw new CustomError.BadRequestError('No File Uploaded');
-	}
-
-	const productImage = req.files.image;
-	if (!productImage.mimetype.startsWith('image')) {
-		throw new CustomError.BadRequestError('Please Upload Image');
-	}
-
-	const maxSize = 1024 * 1024;
-
-	if (productImage.size > maxSize) {
-		throw new CustomError.BadRequestError(
-			'Please upload image smaller than 1MB'
-		);
-	}
-
-	const imagePath = path.join(
-		__dirname,
-		'../public/uploads/' + `${productImage.name}`
+const uploadImage = async (req, res) => {
+	const result = await cloudinary.uploader.upload(
+		req.files.image.tempFilePath,
+		{
+			use_filename: true,
+			folder: 'books-gallery',
+		}
 	);
-	await productImage.mv(imagePath);
-	res.status(StatusCodes.OK).json({ image: `/uploads/${productImage.name}` });
+	fs.unlinkSync(req.files.image.tempFilePath);
+	return res
+		.status(StatusCodes.OK)
+		.json({ image: { src: result.secure_url } });
 };
 
 module.exports = {
@@ -82,5 +69,5 @@ module.exports = {
 	getSingleProduct,
 	updateProduct,
 	deleteProduct,
-	uploadProductImage,
+	uploadImage,
 };
