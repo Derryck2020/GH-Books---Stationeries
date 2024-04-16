@@ -2,7 +2,14 @@ const mongoose = require('mongoose');
 
 const SingleOrderItemSchema = mongoose.Schema({
 	name: { type: String, required: true },
-	image: { type: String, required: true },
+	image: {
+		width: Number,
+		height: Number,
+		url: String,
+		filename: String,
+		size: Number,
+		type: String,
+	},
 	price: { type: Number, required: true },
 	amount: { type: Number, required: true },
 	product: {
