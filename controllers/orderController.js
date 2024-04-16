@@ -25,7 +25,7 @@ const createOrder = async (req, res) => {
 
 	let orderItems = [];
 	let subTotal = 0;
-
+	// we can't use forEach on await thats why we use for of loop
 	for (const item of cartItems) {
 		const dbProduct = await Product.findOne({ _id: item.product });
 		if (!dbProduct) {
@@ -34,11 +34,13 @@ const createOrder = async (req, res) => {
 			);
 		}
 		const { name, price, image, _id } = dbProduct;
+		const getImage = image[0].url;
+		console.log(name, price, getImage);
 		const singleOrderItem = {
 			amount: item.amount,
 			name,
 			price,
-			image,
+			getImage,
 			product: _id,
 		};
 		// add item to order
@@ -63,10 +65,11 @@ const createOrder = async (req, res) => {
 		clientSecret: paymentIntent.client_secret,
 		user: req.user.userId,
 	});
-	res.status(StatusCodes.CREATED).json({
-		order,
-		client_secret: order.client_secret,
-	});
+	// res.status(StatusCodes.CREATED).json({
+	// 	order,
+	// 	client_secret: order.client_secret,
+	// });
+	res.send('created');
 };
 
 const getAllOrders = async (req, res) => {
