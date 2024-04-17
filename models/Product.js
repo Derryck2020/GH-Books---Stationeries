@@ -106,6 +106,11 @@ const ProductSchema = new mongoose.Schema(
 				message: '{VALUE} is not supported',
 			},
 		},
+		edition: {
+			type: Number,
+			required: [true, 'Please provide edition year'],
+			default: 0,
+		},
 		featured: {
 			type: Boolean,
 			default: false,
