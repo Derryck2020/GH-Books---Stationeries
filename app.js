@@ -10,6 +10,12 @@ const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 
+const helmet = require('helmet');
+const cors = require('cors');
+const rateLimiter = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+
 // cloudinary
 const cloudinary = require('cloudinary').v2;
 cloudinary.config({
