@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 
 const ProductImageSchema = new mongoose.Schema({
-	width: Number,
-	height: Number,
 	url: String,
 	filename: String,
 	size: Number,
 	type: String,
+	thumbnail: String,
 });
 
 const ProductSchema = new mongoose.Schema(
@@ -61,10 +60,11 @@ const ProductSchema = new mongoose.Schema(
 		category: {
 			type: String,
 			required: [true, 'Please provide product category'],
-			enum: ['textbooks', 'questions and answers'],
+			enum: ['textbooks', 'questions and answers', 'stationery'],
 		},
 		basic_level: {
 			type: String,
+			required: false,
 			enum: [
 				'basic 1',
 				'basic 2',
@@ -106,10 +106,12 @@ const ProductSchema = new mongoose.Schema(
 				message: '{VALUE} is not supported',
 			},
 		},
+		image: {
+			type: String,
+		},
 		edition: {
 			type: Number,
-			required: [true, 'Please provide edition year'],
-			default: 0,
+			required: false,
 		},
 		featured: {
 			type: Boolean,
@@ -125,7 +127,7 @@ const ProductSchema = new mongoose.Schema(
 			required: true,
 			default: 15,
 		},
-		image: [ProductImageSchema, ProductImageSchema, ProductImageSchema],
+		images: [ProductImageSchema, ProductImageSchema, ProductImageSchema],
 		averageRating: {
 			type: Number,
 			default: 0,
