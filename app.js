@@ -6,7 +6,6 @@ const express = require('express');
 const app = express();
 
 // auxillary packages
-const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 
@@ -51,7 +50,6 @@ app.use(cors());
 app.use(xss());
 app.use(mongoSanitize());
 
-app.use(morgan('tiny'));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
 
