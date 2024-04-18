@@ -39,7 +39,7 @@ const ProductSchema = new mongoose.Schema(
 			enum: [
 				'core subjects',
 				'elective subjects',
-				'general Science',
+				'general science',
 				'general arts',
 				'business',
 				'agriculture',
