@@ -30,7 +30,7 @@ const ProductSchema = new mongoose.Schema(
 				'upper primary',
 				'lower primary',
 				'kindergarten and nursery',
-				'others',
+				'none',
 			],
 		},
 		course: {
@@ -55,6 +55,7 @@ const ProductSchema = new mongoose.Schema(
 				'physical education',
 				'french',
 				'computing',
+				'others',
 			],
 		},
 		category: {
