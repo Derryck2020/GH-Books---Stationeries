@@ -41,6 +41,7 @@ const getAllReviews = async (req, res) => {
 		.populate({ path: 'user', select: 'name' });
 	res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
 };
+
 const getSingleReview = async (req, res) => {
 	const { id: reviewId } = req.params;
 	const review = await Review.findOne({ _id: reviewId });
