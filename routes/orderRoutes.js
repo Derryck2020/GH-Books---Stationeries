@@ -12,7 +12,6 @@ const {
 	getCurrentUserOrders,
 	updateOrder,
 } = require('../controllers/orderController');
-const { get } = require('mongoose');
 
 router
 	.route('/')
