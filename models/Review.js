@@ -54,7 +54,6 @@ ReviewSchema.statics.calculateAverageRating = async function (productId) {
 			},
 		},
 	]);
-	console.log(SpeechRecognitionResultList);
 	try {
 		await this.model('Product').findOneAndUpdate(
 			{ _id: productId },
@@ -72,12 +71,8 @@ ReviewSchema.post('save', async function () {
 	await this.constructor.calculateAverageRating(this.product);
 });
 
-ReviewSchema.post(
-	'deleteOne',
-	{ document: true, query: false },
-	async function () {
-		console.log('post delete hook called');
-	}
-);
+ReviewSchema.post('deleteOne', async function () {
+	await this.constructor.calculateAverageRating(this.product);
+});
 
 module.exports = mongoose.model('Review', ReviewSchema);
