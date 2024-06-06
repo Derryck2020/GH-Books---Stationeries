@@ -11,8 +11,45 @@ const createProduct = async (req, res) => {
 };
 
 const getAllProducts = async (req, res) => {
-	const products = await Product.find({}).select('-images -user');
-	res.status(StatusCodes.OK).json({ products, count: products.length });
+	try {
+		const page = parseInt(req.query.page) || 1;
+		const pageSize = parseInt(req.query.pageSize) || 10;
+		const { featured } = req.query;
+
+		let queryObject = {};
+		if (featured !== undefined) {
+			queryObject.featured = featured === 'true';
+		}
+
+		const totalProducts = await Product.countDocuments({});
+		const products = await Product.find({})
+			.select('-images -user')
+			.skip((page - 1) * pageSize)
+			.limit(pageSize);
+
+		const categories = await Product.distinct('category');
+		const companies = await Product.distinct('company');
+		const levels = await Product.distinct('level');
+		const courses = await Product.distinct('course');
+		const basic_levels = await Product.distinct('basic_level');
+
+		const meta = {
+			pagination: {
+				page,
+				pageSize,
+				pageCount: Math.ceil(totalProducts / pageSize),
+				total: totalProducts,
+			},
+			categories: ['all', ...categories],
+			companies: ['all', ...companies],
+			levels: ['all', ...levels],
+			courses: ['all', ...courses],
+			basic_levels: ['all', ...basic_levels],
+		};
+		res.status(StatusCodes.OK).json({ data: products, meta });
+	} catch (error) {
+		throw new CustomError.NotFoundError(`No products can be found.`);
+	}
 };
 
 const getSingleProduct = async (req, res) => {
