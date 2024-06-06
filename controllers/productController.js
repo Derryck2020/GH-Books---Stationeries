@@ -22,7 +22,7 @@ const getAllProducts = async (req, res) => {
 		}
 
 		const totalProducts = await Product.countDocuments({});
-		const products = await Product.find({})
+		const products = await Product.find(queryObject)
 			.select('-images -user')
 			.skip((page - 1) * pageSize)
 			.limit(pageSize);
