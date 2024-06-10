@@ -14,7 +14,7 @@ const getAllProducts = async (req, res) => {
 	try {
 		const page = parseInt(req.query.page) || 1;
 		const pageSize = parseInt(req.query.pageSize) || 12;
-		const { featured, level } = req.query;
+		const { featured, level, category } = req.query;
 
 		let queryObject = {};
 		if (featured !== undefined) {
@@ -30,6 +30,8 @@ const getAllProducts = async (req, res) => {
 				queryObject.level = { $in: ['upper primary', 'lower primary'] };
 			} else if (level === 'kindergarten and nursery') {
 				queryObject.level = 'kindergarten and nursery';
+			} else if (category === 'stationery') {
+				queryObject.category = 'stationery';
 			}
 		}
 
