@@ -30,9 +30,11 @@ const getAllProducts = async (req, res) => {
 				queryObject.level = { $in: ['upper primary', 'lower primary'] };
 			} else if (level === 'kindergarten and nursery') {
 				queryObject.level = 'kindergarten and nursery';
-			} else if (category === 'stationery') {
-				queryObject.category = 'stationery';
 			}
+		}
+
+		if (category === 'stationery') {
+			queryObject.category = 'stationery';
 		}
 
 		const totalProducts = await Product.countDocuments({});
