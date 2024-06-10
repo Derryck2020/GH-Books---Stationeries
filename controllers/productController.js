@@ -13,12 +13,24 @@ const createProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
 	try {
 		const page = parseInt(req.query.page) || 1;
-		const pageSize = parseInt(req.query.pageSize) || 10;
-		const { featured } = req.query;
+		const pageSize = parseInt(req.query.pageSize) || 12;
+		const { featured, level } = req.query;
 
 		let queryObject = {};
 		if (featured !== undefined) {
 			queryObject.featured = featured === 'true';
+		}
+
+		if (level) {
+			if (level === 'senior high') {
+				queryObject.level = 'senior high';
+			} else if (level === 'junior high') {
+				queryObject.level = 'junior high';
+			} else if (level === 'upper primary' || level === 'lower primary') {
+				queryObject.level = { $in: ['upper primary', 'lower primary'] };
+			} else if (level === 'kindergarten and nursery') {
+				queryObject.level = 'kindergarten and nursery';
+			}
 		}
 
 		const totalProducts = await Product.countDocuments({});
