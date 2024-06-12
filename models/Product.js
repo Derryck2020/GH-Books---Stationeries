@@ -86,7 +86,7 @@ const ProductSchema = new mongoose.Schema(
 			required: [true, 'Please provide product company'],
 			enum: {
 				values: [
-					'a+ series',
+					'a-plus series',
 					'best brain',
 					'aki ola',
 					'excellence',
