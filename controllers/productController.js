@@ -23,6 +23,7 @@ const getAllProducts = async (req, res) => {
 			basic_level,
 			price,
 			sort,
+			search,
 		} = req.query;
 
 		let queryObject = {};
@@ -51,6 +52,18 @@ const getAllProducts = async (req, res) => {
 			queryObject.price = { $gte: minPrice, $lte: maxPrice };
 		}
 
+		if (search) {
+			const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+			queryObject.$or = [
+				{ name: new RegExp(escapedSearch, 'i') },
+				{ company: new RegExp(escapedSearch, 'i') },
+				{ category: new RegExp(escapedSearch, 'i') },
+				{ level: new RegExp(escapedSearch, 'i') },
+				{ course: new RegExp(escapedSearch, 'i') },
+				{ basic_level: new RegExp(escapedSearch, 'i') },
+			];
+		}
+
 		let result = Product.find(queryObject).select('-images -user');
 
 		// Sorting
@@ -64,7 +77,7 @@ const getAllProducts = async (req, res) => {
 			result = result.sort(sortList[sort] || 'name');
 		}
 
-		const totalProducts = await Product.countDocuments({});
+		const totalProducts = await Product.countDocuments(queryObject);
 		const products = await Product.find(queryObject)
 			.select('-images -user')
 			.skip((page - 1) * pageSize)

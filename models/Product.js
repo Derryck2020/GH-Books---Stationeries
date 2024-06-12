@@ -88,7 +88,7 @@ const ProductSchema = new mongoose.Schema(
 				values: [
 					'a-plus series',
 					'best brain',
-					'aki ola',
+					'aki ola series',
 					'excellence',
 					'a.a series',
 					'approachers',
