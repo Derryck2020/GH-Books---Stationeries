@@ -14,27 +14,54 @@ const getAllProducts = async (req, res) => {
 	try {
 		const page = parseInt(req.query.page) || 1;
 		const pageSize = parseInt(req.query.pageSize) || 12;
-		const { featured, level, category } = req.query;
+		const {
+			featured,
+			level,
+			category,
+			company,
+			course,
+			basic_level,
+			price,
+			sort,
+		} = req.query;
 
 		let queryObject = {};
+
 		if (featured !== undefined) {
 			queryObject.featured = featured === 'true';
 		}
 
-		if (level) {
-			if (level === 'senior high') {
-				queryObject.level = 'senior high';
-			} else if (level === 'junior high') {
-				queryObject.level = 'junior high';
-			} else if (level === 'upper primary' || level === 'lower primary') {
-				queryObject.level = { $in: ['upper primary', 'lower primary'] };
-			} else if (level === 'kindergarten and nursery') {
-				queryObject.level = 'kindergarten and nursery';
-			}
+		if (category && category !== 'all') {
+			queryObject.category = category;
+		}
+		if (company && company !== 'all') {
+			queryObject.company = new RegExp(`^${company}$`, 'i');
+		}
+		if (level && level !== 'all') {
+			queryObject.level = level;
+		}
+		if (course && course !== 'all') {
+			queryObject.course = course;
+		}
+		if (basic_level && basic_level !== 'all') {
+			queryObject.basic_level = basic_level;
+		}
+		if (price) {
+			const [minPrice, maxPrice] = price.split('-').map(Number);
+			queryObject.price = { $gte: minPrice, $lte: maxPrice };
 		}
 
-		if (category === 'stationery') {
-			queryObject.category = 'stationery';
+		let result = Product.find(queryObject).select('-images -user');
+
+		// Sorting
+		if (sort) {
+			const sortList = {
+				'a-z': 'name',
+				'z-a': '-name',
+				high: '-price',
+				low: 'price',
+			};
+			result = result.sort(sortList[sort] || 'name');
 		}
 
 		const totalProducts = await Product.countDocuments({});
