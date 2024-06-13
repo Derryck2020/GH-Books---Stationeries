@@ -48,8 +48,7 @@ const getAllProducts = async (req, res) => {
 			queryObject.basic_level = basic_level;
 		}
 		if (price) {
-			const [minPrice, maxPrice] = price.split('-').map(Number);
-			queryObject.price = { $gte: minPrice, $lte: maxPrice };
+			queryObject.price = { $lte: Number(price) };
 		}
 
 		if (search) {
