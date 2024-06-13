@@ -67,19 +67,23 @@ const getAllProducts = async (req, res) => {
 		let result = Product.find(queryObject).select('-images -user');
 
 		// Sorting
+		let sortList = '';
 		if (sort) {
-			const sortList = {
-				'a-z': 'name',
-				'z-a': '-name',
-				high: '-price',
-				low: 'price',
-			};
-			result = result.sort(sortList[sort] || 'name');
+			const sortOrder = sort.split(',').map((field) => {
+				if (field === 'a-z') return { name: 1 };
+				if (field === 'z-a') return { name: -1 };
+				if (field === 'high') return { price: -1 };
+				if (field === 'low') return { price: 1 };
+			});
+			sortList = Object.assign({}, ...sortOrder);
+		} else {
+			sortList = { createdAt: 1 };
 		}
 
 		const totalProducts = await Product.countDocuments(queryObject);
 		const products = await Product.find(queryObject)
 			.select('-images -user')
+			.sort(sortList)
 			.skip((page - 1) * pageSize)
 			.limit(pageSize);
 
