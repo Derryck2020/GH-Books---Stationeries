@@ -21,6 +21,10 @@ const ProductSchema = new mongoose.Schema(
 			required: [true, 'Please provide product price'],
 			default: 0,
 		},
+		discount: {
+			type: Number,
+			required: false,
+		},
 		level: {
 			type: String,
 			required: [true, 'Please a level is required'],
@@ -62,7 +66,7 @@ const ProductSchema = new mongoose.Schema(
 		category: {
 			type: String,
 			required: [true, 'Please provide product category'],
-			enum: ['textbooks', 'questions and answers', 'stationery'],
+			enum: ['textbook', 'questions and answers', 'stationery'],
 		},
 		basic_level: {
 			type: String,
