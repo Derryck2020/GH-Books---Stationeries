@@ -63,8 +63,6 @@ const getAllProducts = async (req, res) => {
 			];
 		}
 
-		let result = Product.find(queryObject).select('-images -user');
-
 		// Sorting
 		let sortList = '';
 		if (sort) {
