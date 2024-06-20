@@ -1,17 +1,19 @@
 const mongoose = require('mongoose');
 
-const SingleOrderItemSchema = mongoose.Schema({
+const ProductImageSchema = new mongoose.Schema({
+	url: String,
+	filename: String,
+	size: Number,
+	type: String,
+	thumbnail: String,
+});
+
+const SingleOrderItemSchema = new mongoose.Schema({
 	name: { type: String, required: true },
-	image: {
-		width: Number,
-		height: Number,
-		url: String,
-		filename: String,
-		size: Number,
-		type: String,
-	},
+	images: [ProductImageSchema],
 	price: { type: Number, required: true },
 	amount: { type: Number, required: true },
+	discount: { type: Number },
 	product: {
 		type: mongoose.Schema.ObjectId,
 		ref: 'Product',
@@ -19,15 +21,20 @@ const SingleOrderItemSchema = mongoose.Schema({
 	},
 });
 
-const OrderSchema = mongoose.Schema(
+const OrderSchema = new mongoose.Schema(
 	{
-		tax: {
+		discount: {
 			type: Number,
 			required: true,
 		},
-		shippingFee: {
-			type: Number,
-			required: true,
+		name: {
+			type: String,
+			trim: true,
+			required: [true, 'Please provide your name'],
+		},
+		address: {
+			type: String,
+			required: [true, 'Please provide your address'],
 		},
 		subTotal: {
 			type: Number,
@@ -37,7 +44,7 @@ const OrderSchema = mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		orderItems: [SingleOrderItemSchema],
+		cartItems: [SingleOrderItemSchema],
 		status: {
 			type: String,
 			enum: ['pending', 'failed', 'paid', 'delivered', 'cancelled'],
@@ -47,13 +54,6 @@ const OrderSchema = mongoose.Schema(
 			type: mongoose.Schema.ObjectId,
 			ref: 'User',
 			required: true,
-		},
-		clientSecret: {
-			type: String,
-			required: true,
-		},
-		paymentIntentId: {
-			type: String,
 		},
 	},
 	{ timestamps: true }

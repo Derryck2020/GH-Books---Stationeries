@@ -3,29 +3,25 @@ const Product = require('../models/Product');
 
 const CustomError = require('../errors');
 const { StatusCodes } = require('http-status-codes');
-const { checkPermissions } = require('../utils');
 
-const fakeStripeApI = async ({ amount, currency }) => {
-	const client_secret = 'someRandomValue';
-	return { client_secret, amount };
-};
+// const fakeStripeApI = async ({ amount, currency }) => {
+// 	const client_secret = 'someRandomValue';
+// 	return { client_secret, amount };
+// };
 
 const createOrder = async (req, res) => {
-	const { items: cartItems, tax, shippingFee } = req.body;
+	const { name, address, cartItems, subTotal, orderTotal, discount } =
+		req.body;
 
 	if (!cartItems || cartItems.length < 1) {
 		throw new CustomError.BadRequestError('No cart items provided');
 	}
 
-	if (!tax || !shippingFee) {
-		throw new CustomError.BadRequestError(
-			'Please provide tax and shipping fee'
-		);
+	if (!name || !address) {
+		throw new CustomError.BadRequestError('Please provide name and address');
 	}
 
 	let orderItems = [];
-	let subTotal = 0;
-	// we can't use forEach on await thats why we use for of loop
 	for (const item of cartItems) {
 		const dbProduct = await Product.findOne({ _id: item.product });
 		if (!dbProduct) {
@@ -33,43 +29,37 @@ const createOrder = async (req, res) => {
 				`No product with id: ${item.product}`
 			);
 		}
-		const { name, price, image, _id } = dbProduct;
-		const getImage = image[0].url;
-		console.log(name, price, getImage);
+		const {
+			name: productName,
+			price,
+			discount,
+			images,
+			_id: product,
+		} = dbProduct;
+		const getImage = images[0].url;
+
 		const singleOrderItem = {
 			amount: item.amount,
-			name,
+			name: productName,
+			discount,
 			price,
-			getImage,
-			product: _id,
+			image: getImage,
+			product: product,
 		};
-		// add item to order
 		orderItems = [...orderItems, singleOrderItem];
-		// calculate subtotal
-		subTotal += item.amount * price;
 	}
-	// calculate total
-	const total = tax + shippingFee + subTotal;
-	// get client secret
-	const paymentIntent = await fakeStripeApI({
-		amount: total,
-		currency: 'usd',
-	});
 
 	const order = await Order.create({
-		orderItems,
-		total,
+		name,
+		address,
 		subTotal,
-		tax,
-		shippingFee,
-		clientSecret: paymentIntent.client_secret,
+		total: orderTotal,
+		cartItems,
+		discount,
 		user: req.user.userId,
 	});
-	// res.status(StatusCodes.CREATED).json({
-	// 	order,
-	// 	client_secret: order.client_secret,
-	// });
-	res.send('created');
+
+	res.status(StatusCodes.CREATED).json({ order });
 };
 
 const getAllOrders = async (req, res) => {
