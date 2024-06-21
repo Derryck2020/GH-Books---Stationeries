@@ -4,10 +4,13 @@ const createJWT = ({ payload }) => {
 	const token = jwt.sign(payload, process.env.JWT_SECRET, {
 		expiresIn: process.env.JWT_LIFETIME,
 	});
+	// console.log(token);
 	return token;
 };
 
-const isTokenValid = ({ token }) => jwt.verify(token, process.env.JWT_SECRET);
+const isTokenValid = ({ token }) => {
+	jwt.verify(token, process.env.JWT_SECRET);
+};
 
 const attachCookiesToReponse = ({ res, user }) => {
 	const token = createJWT({ payload: user });

@@ -5,10 +5,9 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 
-// auxillary packages
+// auxiliary packages
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
-
 const helmet = require('helmet');
 const cors = require('cors');
 const rateLimiter = require('express-rate-limit');
@@ -40,29 +39,24 @@ const errorHandlerMiddleware = require('./middleware/error-handler');
 app.set('trust proxy', 1);
 app.use(
 	rateLimiter({
-		windowMs: 15 * 60 * 1000,
-		max: 60,
+		windowMs: 15 * 60 * 1000, // 15 minutes
+		max: 60, // limit each IP to 60 requests per windowMs
 	})
 );
 
 app.use(helmet());
-
-app.use(
-	cors({
-		origin: 'http://localhost:5173',
-		credentials: true,
-	})
-);
+app.use(cors());
 
 app.use(xss());
 app.use(mongoSanitize());
 
 app.use(express.json());
-app.use(cookieParser(process.env.JWT_SECRET));
+app.use(cookieParser(process.env.JWT_SECRET)); // Use your JWT secret here
 
 app.use(express.static('./public'));
 app.use(fileUpload({ useTempFiles: true }));
 
+// routes
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/products', productRouter);
@@ -76,7 +70,9 @@ const port = process.env.PORT || 5000;
 const start = async () => {
 	try {
 		await connectDB(process.env.MONGO_URL);
-		app.listen(port, console.log(`Server is listening on port ${port}...`));
+		app.listen(port, () =>
+			console.log(`Server is listening on port ${port}...`)
+		);
 	} catch (error) {
 		console.log(error);
 	}
