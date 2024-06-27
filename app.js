@@ -6,7 +6,6 @@ const express = require('express');
 const app = express();
 
 // auxiliary packages
-const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
 const helmet = require('helmet');
 const cors = require('cors');
@@ -56,7 +55,6 @@ app.use(xss());
 app.use(mongoSanitize());
 
 app.use(express.json());
-app.use(cookieParser(process.env.JWT_SECRET)); // Use your JWT secret here
 
 app.use(express.static('./public'));
 app.use(fileUpload({ useTempFiles: true }));
