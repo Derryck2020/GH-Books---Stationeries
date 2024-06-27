@@ -1,11 +1,7 @@
 const User = require('../models/User');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
-const {
-	createTokenUser,
-	attachCookiesToReponse,
-	checkPermissions,
-} = require('../utils');
+const { createJWT, checkPermissions } = require('../utils');
 
 const getAllUsers = async (req, res) => {
 	const users = await User.find({ role: 'user' }).select('-password');
@@ -37,9 +33,9 @@ const updateUser = async (req, res) => {
 
 	await user.save();
 
-	const tokenUser = createTokenUser(user);
-	attachCookiesToReponse({ res, user: tokenUser });
-	res.status(StatusCodes.OK).json({ user: tokenUser });
+	const tokenUser = { name: user.name, userId: user._id, role: user.role };
+	const token = createJWT({ payload: tokenUser });
+	res.status(StatusCodes.CREATED).json({ user: tokenUser, token });
 };
 
 const updateUserPassword = async (req, res) => {
