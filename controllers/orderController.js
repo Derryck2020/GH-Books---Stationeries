@@ -4,11 +4,6 @@ const Product = require('../models/Product');
 const CustomError = require('../errors');
 const { StatusCodes } = require('http-status-codes');
 
-// const fakeStripeApI = async ({ amount, currency }) => {
-// 	const client_secret = 'someRandomValue';
-// 	return { client_secret, amount };
-// };
-
 const createOrder = async (req, res) => {
 	const { name, address, cartItems, subTotal, orderTotal, discount } =
 		req.body;
